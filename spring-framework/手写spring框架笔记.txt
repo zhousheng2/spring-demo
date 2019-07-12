@@ -1,0 +1,39 @@
+
+BeanFactory(接口)
+	AbstractBeanFactory（抽象实现类）
+---------------------------------------------------------------------解析xml文件
+		DefaultListableBeanFactory（子类）：1.读取配置文件的bean信息；2.将bean信息封装到BeanDefinition对象中；3.再将BeanDefinition放入集合对象中
+			-beanDefinitions集合属性
+			-singletonObjects集合属性
+			#DefaultListableBeanFactory：构造函数
+				#registeResources：注册资源
+				#registeTypeConverters：注册converters
+				#getResource:获取Resource
+				XmlBeanDefinationParser：
+					#loadBeanDefinations（this,resource）：1.读取配置文件的bean信息
+						Resource
+							#getInputStream：获取InputStream
+						DocumentReader
+							#creatDocument(InputStream)：获取document对象
+						xmlBeanDefinationDocumentParser
+							-DefaultListableBeanFactory属性
+							#loadBeanDefinations(rootElement)：解析xml文件
+								#parseDefaultElement：解析bean标签，2.将bean信息封装到BeanDefinition对象中
+									BeanDefinition（新建，添加class,beanName,method属性）
+									#parsePropertyElement（beanDefinition, propertyElement）：给BeanDefinition添加property属性
+									#registerBeanDefinition(beanName, beanDefinition)：注册BeanDefinition，3.再将BeanDefinition放入集合对象中
+								#parseCustomElement：解析自定义标签
+			#registerBeanDefinition：注册BeanDefinition
+---------------------------------------------------------------------获取bean实例
+			#getBean：根据beanName获取实例
+				#get(beanName)：获取beanDefinition对象（包含解析的bean标签信息）
+				#createBeanInstance：通过构造函数，创建bean实例
+					#createObject(beanClassName,object)：通过反射获取实例类型，根据类型创建构造函数，根据构造函数创建bean实例
+				#setProperty：设置bean实例参数
+					？value：类型判断
+						TypedStringValue:直接赋值
+						RuntimeBeanReference:get(beanName)
+					#setProperty(instance, name, valueToUse)：通过反射给bean实例属性赋值
+				#initBean(instance, beanDefinition)：初始化bean实例
+					#invokeMethod(instance,initMethod)：通过反射给bean实例初始化方法
+			
