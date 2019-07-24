@@ -1,12 +1,12 @@
 package com.example.springframework.beans.factory;
 
+import com.example.springframework.beans.aware.Aware;
+import com.example.springframework.beans.aware.BeanFactoryAware;
 import com.example.springframework.beans.config.*;
 import com.example.springframework.beans.converter.IntegerTypeConverter;
 import com.example.springframework.beans.converter.StringTypeConverter;
 import com.example.springframework.beans.converter.TypeConverter;
-import com.example.springframework.beans.factory.AbstractBeanFactory;
 import com.example.springframework.beans.utils.ReflectUtils;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
@@ -96,7 +96,53 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
 
         // 初始化
         initBean(instance, beanDefinition);
+
+        //将创建的对象放入缓存中
+        singletonObjects.put(beanName, instance);
+
         return instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> getBeansByType(Class<T> clazz) {
+        List<T> list = new ArrayList<>();
+        try {
+            for (BeanDefinition beanDefinition : beanDefinitions.values()) {
+                Class<?> aClass = Class.forName(beanDefinition.getBeanClassName());
+                if (aClass.isAssignableFrom(clazz)) {
+                    String beanName = beanDefinition.getBeanName();
+                    list.add((T)getBean(beanName));
+                }
+            }
+            return list;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> getBeanNamesByType(Class<?> clazz) {
+        List<String> beanNamelist = new ArrayList<>();
+        try {
+            for (String beanName : beanDefinitions.keySet()) {
+                BeanDefinition beanDefinition = beanDefinitions.get(beanName);
+                Class<?> aClass = Class.forName(beanDefinition.getBeanClassName());
+                if (aClass.isAssignableFrom(clazz)) {
+                    beanNamelist.add(beanName);
+                }
+            }
+            return beanNamelist;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, BeanDefinition> getBeanDefinitions() {
+        return beanDefinitions;
     }
 
     /**
@@ -105,6 +151,13 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
      * @param beanDefinition
      */
     private void initBean(Object instance, BeanDefinition beanDefinition) {
+        // 判断aware是不是instance实例的接口
+        // 操作Aware接口
+        if (instance instanceof Aware) {
+            if (instance instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) instance).setBeanFactory(this);
+            }
+        }
         String initMethod = beanDefinition.getInitMethod();
         if (StringUtils.isEmpty(initMethod)) {
             return;
