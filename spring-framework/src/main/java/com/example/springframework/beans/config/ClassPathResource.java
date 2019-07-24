@@ -1,6 +1,5 @@
 package com.example.springframework.beans.config;
 
-import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 
@@ -26,7 +25,7 @@ public class ClassPathResource implements Resource {
 
     @Override
     public boolean isCanRead(String location) {
-        if (StringUtils.isEmpty(location)) {
+        if (location != null && !"".equals(location)) {
             return false;
         }
         if (location.startsWith("classpath:")) {
@@ -38,7 +37,7 @@ public class ClassPathResource implements Resource {
 
     @Override
     public InputStream getInputStream() {
-        if (StringUtils.isEmpty(location)) {
+        if (location != null && !"".equals(location)) {
             return null;
         }
         location = location.replace("classpath:", "");

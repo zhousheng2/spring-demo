@@ -3,7 +3,6 @@ package com.example.springframework.beans.config;
 import com.example.springframework.beans.factory.DefaultListableBeanFactory;
 import com.example.springframework.beans.utils.ReflectUtils;
 import org.dom4j.Element;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -108,18 +107,18 @@ public class XmlBeanDefinationDocumentParser {
         // 获取ref属性
         String ref = propertyElement.attributeValue("ref");
         //若value和ref都有值，则直接返回
-        if (!StringUtils.isEmpty(value) && !StringUtils.isEmpty(ref)) {
+        if ((value != null && !"".equals(value)) && (ref != null && !"".equals(ref))) {
             return;
         }
         //封装一个<property>的内容
         PropertyValue propertyValue = null;
-        if (!StringUtils.isEmpty(value)) {
+        if (value != null && !"".equals(value)) {
             TypedStringValue typedStringValue = new TypedStringValue(value);
             Class<?> typeByFieldName = ReflectUtils.getTypeByFieldName(beanDefinition.getBeanClassName(), name);
             typedStringValue.setTargetType(typeByFieldName);
             propertyValue = new PropertyValue(name, typedStringValue);
             beanDefinition.addPropertyValues(propertyValue);
-        } else if (!StringUtils.isEmpty(ref)) {
+        } else if (ref != null && !"".equals(ref)) {
             RuntimeBeanReference runtimeBeanReference = new RuntimeBeanReference(ref);
             propertyValue = new PropertyValue(name, runtimeBeanReference);
             beanDefinition.addPropertyValues(propertyValue);

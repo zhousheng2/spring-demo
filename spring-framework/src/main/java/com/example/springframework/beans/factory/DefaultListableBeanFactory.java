@@ -7,9 +7,7 @@ import com.example.springframework.beans.converter.IntegerTypeConverter;
 import com.example.springframework.beans.converter.StringTypeConverter;
 import com.example.springframework.beans.converter.TypeConverter;
 import com.example.springframework.beans.utils.ReflectUtils;
-import org.springframework.util.StringUtils;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,7 +157,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
             }
         }
         String initMethod = beanDefinition.getInitMethod();
-        if (StringUtils.isEmpty(initMethod)) {
+        if (initMethod != null && !"".equals(initMethod)) {
             return;
         }
         // 执行初始化方法
