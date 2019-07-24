@@ -157,7 +157,7 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
             }
         }
         String initMethod = beanDefinition.getInitMethod();
-        if (initMethod != null && !"".equals(initMethod)) {
+        if (initMethod == null || "".equals(initMethod)) {
             return;
         }
         // 执行初始化方法

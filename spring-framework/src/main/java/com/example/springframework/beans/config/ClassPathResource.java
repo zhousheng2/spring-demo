@@ -37,7 +37,7 @@ public class ClassPathResource implements Resource {
 
     @Override
     public InputStream getInputStream() {
-        if (location != null && !"".equals(location)) {
+        if (location == null || "".equals(location)) {
             return null;
         }
         location = location.replace("classpath:", "");
