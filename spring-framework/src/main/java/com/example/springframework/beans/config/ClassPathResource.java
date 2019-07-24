@@ -25,7 +25,7 @@ public class ClassPathResource implements Resource {
 
     @Override
     public boolean isCanRead(String location) {
-        if (location != null && !"".equals(location)) {
+        if (location == null || "".equals(location)) {
             return false;
         }
         if (location.startsWith("classpath:")) {
