@@ -1,6 +1,7 @@
 package com.example.springframework.beans.config;
 
 import com.example.springframework.beans.factory.DefaultListableBeanFactory;
+import com.example.springframework.beans.utils.ClassUtils;
 import com.example.springframework.beans.utils.ReflectUtils;
 import org.dom4j.Element;
 
@@ -128,5 +129,25 @@ public class XmlBeanDefinationDocumentParser {
     }
 
     private void parseCustomElement(Element element) {
+        if (element.getName().equals("component-scan")) {
+            String packageName = element.attributeValue("package");
+
+            List<String> beanClassNames = getBeanClassNames(packageName);
+
+            BeanDefinition beanDefinition = null;
+            for (String className : beanClassNames) {
+                String beanName = className.substring(className.lastIndexOf(".") + 1);
+
+                beanDefinition = new BeanDefinition(beanName, className);
+                // 注册BeanDefinition信息
+                registerBeanDefinition(beanName, beanDefinition);
+            }
+        }
+    }
+
+    private static List<String> getBeanClassNames(String packageName) {
+        // 获取项目路径下指定包名下面的所有类名，最终得到类似：com.kkb.handler.UserHandler
+        List<String> clazzNames = ClassUtils.getClazzName(packageName, false);
+        return clazzNames;
     }
 }
