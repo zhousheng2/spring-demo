@@ -25,8 +25,6 @@ public class BeanDefinition {
         this.beanClassName = beanClassName;
     }
 
-    public void setInitMethod(String initMethod) {
-    }
 
     public String getBeanName() {
         return beanName;
@@ -44,15 +42,19 @@ public class BeanDefinition {
         this.beanClassName = beanClassName;
     }
 
-    public String getInitMethod() {
-        return initMethod;
-    }
-
     public List<PropertyValue> getPropertyValues() {
         return propertyValues;
     }
 
     public void addPropertyValues(PropertyValue propertyValue) {
         this.propertyValues.add(propertyValue);
+    }
+
+    public String getInitMethod() {
+        return initMethod;
+    }
+
+    public void setInitMethod(String initMethod) {
+        this.initMethod = initMethod;
     }
 }

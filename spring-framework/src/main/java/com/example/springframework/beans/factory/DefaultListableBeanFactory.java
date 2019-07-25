@@ -108,7 +108,8 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
         try {
             for (BeanDefinition beanDefinition : beanDefinitions.values()) {
                 Class<?> aClass = Class.forName(beanDefinition.getBeanClassName());
-                if (aClass.isAssignableFrom(clazz)) {
+                // clazz是否是aClass的父类型
+                if (clazz.isAssignableFrom(aClass)) {
                     String beanName = beanDefinition.getBeanName();
                     list.add((T)getBean(beanName));
                 }
@@ -127,7 +128,8 @@ public class DefaultListableBeanFactory extends AbstractBeanFactory {
             for (String beanName : beanDefinitions.keySet()) {
                 BeanDefinition beanDefinition = beanDefinitions.get(beanName);
                 Class<?> aClass = Class.forName(beanDefinition.getBeanClassName());
-                if (aClass.isAssignableFrom(clazz)) {
+                // clazz是否是aClass的父类型
+                if (clazz.isAssignableFrom(aClass)) {
                     beanNamelist.add(beanName);
                 }
             }
